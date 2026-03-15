@@ -8,9 +8,10 @@ A graduate Data Science project analyzing user behavior from a large-scale e-com
 
 - [Project Structure](#project-structure)
 - [Dataset](#dataset)
+- [Setup](#setup)
 - [Development Workflow](#development-workflow)
 - [Branching & Collaboration](#branching--collaboration)
-- [Environment Setup](#environment-setup)
+- [Tools & Technologies](#tools--technologies)
 
 ---
 
@@ -19,21 +20,25 @@ A graduate Data Science project analyzing user behavior from a large-scale e-com
 ```
 ecommerce-behavior-analysis/
 │
-├── README.md                        
-├── .gitignore                       
-├── requirements.txt                 
-├── .env.example                     
+├── README.md
+├── .gitignore
+├── requirements.txt
+├── .env.example
 │
 ├── data/
-│   ├── README.md                    # How to download the dataset
-│   ├── raw/                         # Full raw data — NOT committed to git
-│   ├── processed/                   # Cleaned outputs — NOT committed to git
-│   └── samples/                     # Small sample CSVs for development — committed to git
+│   ├── README.md                        # Overall data strategy
+│   ├── raw/
+│   │   ├── README.md                    # Sampling method and known data issues
+│   │   ├── oct_sample.csv               # Random sample from 2019-Oct.csv
+│   │   └── nov_sample.csv               # Random sample from 2019-Nov.csv
+│   └── processed/
+│       ├── README.md                    # What changed and why
+│       └── events_clean.csv             # Combined cleaned sample — use this
 │
 ├── notebooks/
-│   ├── 00_data_exploration.ipynb
-│   ├── 01_user_behavior_analysis.ipynb
-│   ├── 02_product_affinity_analysis.ipynb
+│   ├── 00_data_exploration.ipynb        # Initial data exploration and findings
+│   ├── 01_preprocessing.ipynb           # Sampling and cleaning pipeline walkthrough
+│   ├── 02_user_behavior_analysis.ipynb
 │   ├── 03_user_segmentation.ipynb
 │   ├── 04_collaborative_filtering.ipynb
 │   ├── 05_ab_testing_analysis.ipynb
@@ -43,17 +48,16 @@ ecommerce-behavior-analysis/
 │
 ├── src/
 │   ├── data/
-│   │   ├── download.py              # Kaggle API download script
-│   │   └── preprocess.py            # Cleaning & feature engineering pipeline
+│   │   └── preprocess.py                # Sampling and cleaning functions
 │   ├── models/
 │   │   ├── collaborative_filter.py
 │   │   ├── segmentation.py
 │   │   └── price_predictor.py
 │   ├── features/
-│   │   ├── time_features.py         # Seasonal, time-of-day, day-of-week features
-│   │   └── behavior_features.py     # Clickstream, cart abandonment features
+│   │   ├── time_features.py
+│   │   └── behavior_features.py
 │   └── visualization/
-│       └── customer_journey.py      # Customer journey chart logic
+│       └── customer_journey.py
 │
 ├── tests/
 │   ├── test_preprocess.py
@@ -61,174 +65,132 @@ ecommerce-behavior-analysis/
 │   └── test_features.py
 │
 └── reports/
-    ├── figures/                     # Saved plots and charts
+    ├── figures/
     └── final_report.md
 ```
-
-### What goes where
-
-**`data/`** — Data lives here but is mostly gitignored. Only the `samples/` subfolder (a few thousand rows) is committed so teammates can develop without downloading the full dataset. See the [Dataset](#dataset) section for how to get the full data.
-
-**`notebooks/`** — Exploration, analysis, and storytelling. Each notebook corresponds to one component of the project. Notebooks are where you figure things out and present results — they are not where reusable logic lives.
-
-**`src/`** — All reusable Python code. Once logic is finalized in a notebook, it is extracted into a function or class here. Notebooks import from `src/`, keeping them clean and testable. The subfolders are:
-- `data/` — downloading and preprocessing the raw dataset
-- `models/` — model training and inference logic
-- `features/` — feature engineering functions
-- `visualization/` — chart and plot generation functions
-
-**`tests/`** — Unit tests for functions in `src/`. Run with `pytest` before merging any branch.
-
-**`reports/figures/`** — All plots saved from notebooks go here so they can be referenced in the final report.
 
 ---
 
 ## Dataset
 
-**Source:** [E-Commerce Behavior Data from Multi-Category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) (Kaggle)
+The project works with random samples of a large e-commerce event dataset from 
+Kaggle. The full dataset is never stored in this repository.
 
-This dataset is several gigabytes and is **not stored in this repository**. See `data/README.md` for full download instructions using the Kaggle API.
+**Every teammate can start working immediately after cloning the repo** — the sample 
+files in `data/raw/` and `data/processed/` are committed to git and require no 
+additional downloads.
 
-### Why the data is not in git
+If you need the full dataset for any reason, see `data/README.md` for instructions.
 
-Committing large files to git causes the repository to become slow and bloated for everyone. Instead, we use the following approach:
+**Full dataset source:** [E-Commerce Behavior Data from Multi-Category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store)
 
-1. **One person** downloads the full raw dataset and runs `src/data/preprocess.py` to produce a cleaned, compressed Parquet file in `data/processed/`
-2. The processed file is shared with the team via Google Drive (link in the team group chat)
-3. Everyone else downloads only the processed file — the raw data never needs to touch your machine
-4. The `data/samples/` folder in this repo contains a small slice of the cleaned data for local development and testing
+---
 
-### Memory considerations
+## Setup
 
-The raw data is read in chunks to avoid loading it all into memory at once:
-
-```python
-for chunk in pd.read_csv('data/raw/events.csv', chunksize=100_000):
-    # process each chunk
+### 1. Clone the repo
+```bash
+git clone https://github.com/halleepham/ecommerce-behavior-analysis.git
+cd ecommerce-behavior-analysis
 ```
 
-The processed Parquet output is significantly smaller than the raw CSV and loads much faster.
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Set up environment variables
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in your Kaggle credentials. This is only required if you need 
+to download the full dataset. See `data/README.md` for instructions.
+
+### 4. Verify your setup
+
+Load the processed sample to confirm everything is working:
+```python
+import pandas as pd
+df = pd.read_csv('data/processed/events_clean.csv', parse_dates=['event_time'])
+print(df.shape)
+print(df.head())
+```
 
 ---
 
 ## Development Workflow
 
-### 1. Setting up your environment
+### Working with data
 
-```bash
-git clone https://github.com/halleepham/ecommerce-behavior-analysis.git
-cd ecommerce-behavior-analysis
-pip install -r requirements.txt
-```
-
-Copy the environment variable template and fill in your credentials:
-
-```bash
-cp .env.example .env
-```
-
-> Kaggle API key setup instructions will be added here once finalized.
-
-### 2. Working with data locally
-
-For day-to-day development, use the sample data in `data/samples/`. Your code should work on the sample before you test it on the full processed dataset.
-
-To load the sample:
-
+For all development, load the processed sample:
 ```python
 import pandas as pd
-df = pd.read_csv('data/samples/sample_events.csv')
+df = pd.read_csv('data/processed/events_clean.csv', parse_dates=['event_time'])
 ```
 
-To load the full processed data (after downloading from Google Drive):
+### Notebook to src workflow
 
-```python
-import pandas as pd
-df = pd.read_parquet('data/processed/events_clean.parquet')
-```
+1. Explore and develop logic freely in the relevant notebook
+2. Once the logic works, move it into the appropriate file in `src/` as a clean function
+3. Import that function back into the notebook
+4. Write a test for the function in `tests/`
 
-### 3. Notebook → src workflow
-
-When working on a feature:
-
-1. Start in the relevant notebook under `notebooks/` — explore freely, try things, make plots
-2. Once the logic is solid, move it into the appropriate file in `src/` as a clean function
-3. Import and call that function back in the notebook to keep it clean
-4. Write a basic test for the function in `tests/`
-
-**Example:** You figure out how to engineer time-of-day features in notebook `06`. Once it works, the function moves to `src/features/time_features.py`, and the notebook simply calls `from src.features.time_features import get_time_features`.
-
-### 4. Running tests
-
-Before opening a pull request, always run:
-
+### Running tests
 ```bash
 pytest tests/
 ```
 
-All tests must pass before merging.
+All tests must pass before opening a pull request.
 
 ---
 
 ## Branching & Collaboration
 
-We use a feature branch workflow. Nobody commits directly to `main`.
+Nobody commits directly to `main`. We use a feature branch workflow.
 
 ### Branch naming
 
 | Type | Convention | Example |
 |---|---|---|
 | New feature | `feature/short-description` | `feature/collaborative-filter` |
-| Notebook work | `notebook/short-description` | `notebook/ab-testing-analysis` |
+| Notebook work | `notebook/short-description` | `notebook/data-exploration` |
+| Bug fix | `fix/short-description` | `fix/null-price-handling` |
 
 ### Standard process
 
-```
-main                  ← always stable, always runs
-  └── feature/your-feature
-        ├── do your work here
-        ├── run pytest
-        └── open a pull request → teammate reviews → merge
-```
-
-1. Pull the latest `main` before starting any work: `git pull origin main`
+1. Pull latest main: `git pull origin main`
 2. Create your branch: `git checkout -b feature/your-feature`
-3. Commit often with clear messages: `git commit -m "Add cart abandonment feature engineering"`
-4. Push your branch and open a pull request on GitHub
-5. At least one teammate must review and approve before merging
-6. Delete the branch after merging
+3. Do your work and commit often with clear messages
+4. Run tests: `pytest tests/`
+5. Push and open a pull request on GitHub
+6. At least one teammate reviews and approves before merging
+7. Delete the branch after merging
 
-### Commit message format
-
-Keep messages short and specific. Start with a verb:
-
-- `Add collaborative filtering model skeleton`
-- `Fix null values in price column preprocessing`
-- `Update notebook 03 with final segmentation plots`
+### Good commit messages
+```
+Add cart abandonment feature engineering
+Fix null values in price column preprocessing
+Update notebook 03 with final segmentation plots
+Extract collaborative filter logic into src/models/
+```
 
 ---
 
-## Environment Setup
+## Tools & Technologies
 
-All dependencies are pinned in `requirements.txt`. Install with:
+All tools used in this project are free.
 
-```bash
-pip install -r requirements.txt
-```
-
-Key libraries used in this project:
-
-| Library | Purpose |
+| Tool | Purpose |
 |---|---|
-| `pandas` | Data loading and manipulation |
-| `numpy` | Numerical operations |
-| `scikit-learn` | Segmentation, collaborative filtering, A/B testing |
-| `matplotlib` / `seaborn` | Visualization |
+| `pandas` / `numpy` | Data loading, cleaning, and manipulation |
+| `scikit-learn` | Clustering, collaborative filtering, A/B testing |
+| `matplotlib` / `seaborn` | Charts, plots, and visualizations |
+| `scipy` | Statistical tests for A/B testing |
 | `pyarrow` | Parquet file format support |
-| `kaggle` | Dataset download via API |
-| `pytest` | Running unit tests |
-| `jupyter` | Notebook environment |
-
-> All computation in this project uses free tools only. No paid APIs or cloud compute services are required.
-
-> We may use Colab instead of Jupyter
+| `pytest` | Automated testing |
+| `python-dotenv` | Loading credentials from `.env` |
+| Kaggle Notebooks | Cloud notebook environment for data processing |
+| Google Colab | Alternative cloud notebook environment |
+| GitHub | Version control and code review |
+| Google Drive | Sharing large processed files if needed |
