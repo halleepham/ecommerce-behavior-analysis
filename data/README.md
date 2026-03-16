@@ -4,52 +4,83 @@ This folder contains all data for the project. Read this before touching anythin
 
 ---
 
-## What is in this folder
-```
-data/
-├── raw/
-│   ├── README.md
-│   ├── oct_sample.csv       ← random sample from 2019-Oct.csv, committed to git
-│   └── nov_sample.csv       ← random sample from 2019-Nov.csv, committed to git
-└── processed/
-    ├── README.md
-    └── events_clean.csv     ← combined and cleaned version of both samples, committed to git
-```
+## Two tiers of data
 
-## What is NOT in this folder
-
-The full raw dataset from Kaggle is never stored in this repository. It is several gigabytes and would make the repo unusable. If you need the full dataset for any reason, see the instructions below.
-
----
-
-## Full dataset
-
-**Source:** [E-Commerce Behavior Data from Multi-Category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store)
-
-The full dataset consists of two files:
-- `2019-Oct.csv` — 5.67 GB
-- `2019-Nov.csv` — 9.01 GB
-
-To access the full dataset, go to the Kaggle page linked above. You will need a free Kaggle account.
-
----
-
-## Data strategy
-
-The project works with two tiers of data:
+This project uses two tiers of data. Understanding the difference is important 
+before you write any code.
 
 **Tier 1 — Sample data (in this repo)**
-Random samples taken from each raw file before any cleaning. These are committed directly to git so every teammate can develop and test code immediately after cloning the repo without downloading anything.
+A session-based sample of the **processed data** committed directly to git so every 
+teammate can develop and test code immediately after cloning the repo without 
+downloading anything. Use this tier for all day to day development (writing functions, running tests, and making sure your code works).
 
-**Tier 2 — Full dataset (Kaggle only)**
-Only needed if a specific project component requires more data than the sample provides. In that case, download the full dataset from Kaggle, run the preprocessing notebook, and save the output to Google Drive. See the team group chat for the Google Drive link.
+**Tier 2 — Full dataset (Kaggle)**
+The complete raw dataset lives permanently on Kaggle. The full **processed** dataset 
+is saved as a Kaggle dataset that any teammate can attach to their Kaggle notebook 
+with one click. Use this tier for final analysis, model training, and generating 
+results for the report.
 
 ---
 
-## How the samples were created
+## Why session-based sampling
 
-The sampling and cleaning process is documented in `notebooks/01_preprocessing.ipynb`. 
-The underlying functions are in `src/data/preprocess.py`. To recreate the samples 
-from scratch, download the full dataset from Kaggle and run:
+Random row sampling would break user sessions. If a user has 10 events in a 
+session and only 3 are sampled, the sequence is destroyed. Components like 
+collaborative filtering, customer journey analysis, and cart abandonment all 
+depend on seeing complete sequences of user behavior. Session-based sampling 
+solves this by keeping all rows that belong to a sampled session fully intact.
 
-    python src/data/preprocess.py
+---
+
+## Folder structure
+```
+data/
+├── README.md                    ← you are here
+├── raw/
+│   └── README.md                ← points to full dataset on Kaggle
+└── processed/
+    ├── README.md                ← what changed during cleaning and why
+    └── events_clean.csv         ← session-based sample, use this for development
+```
+
+---
+
+## How to load the sample data
+
+For all development and testing, load the processed sample:
+```python
+import pandas as pd
+df = pd.read_csv('data/processed/events_clean.csv', parse_dates=['event_time'])
+```
+
+---
+
+## How to access the full dataset
+
+**Full raw dataset:**
+[E-Commerce Behavior Data from Multi-Category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store)
+
+**Full processed dataset:**
+Available as a Kaggle dataset — link in the team group chat. Attach it to your 
+Kaggle notebook with one click. It will be available at:
+
+    /kaggle/input/ecommerce-processed/events_clean.parquet
+
+> Note: the Kaggle processed dataset will be created after the preprocessing 
+notebook is complete. Check the team group chat for the link.
+
+---
+
+## Switching between sample and full data
+
+Every script that loads data uses a single path variable at the top. To switch 
+between the sample and the full dataset, change only that one line:
+```python
+# Development — sample data in the repo
+DATA_PATH = 'data/processed/events_clean.csv'
+
+# Final runs — full processed dataset on Kaggle
+# DATA_PATH = '/kaggle/input/ecommerce-processed/events_clean.parquet'
+```
+
+Never hardcode a data path anywhere else in your code. Always use DATA_PATH.

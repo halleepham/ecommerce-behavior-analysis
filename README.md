@@ -26,25 +26,24 @@ ecommerce-behavior-analysis/
 ├── .env.example
 │
 ├── data/
-│   ├── README.md                        # Overall data strategy
+│   ├── README.md                           # Overall data strategy
 │   ├── raw/
-│   │   ├── README.md                    # Sampling method and known data issues
-│   │   ├── oct_sample.csv               # Random sample from 2019-Oct.csv
-│   │   └── nov_sample.csv               # Random sample from 2019-Nov.csv
+│   │   └── README.md                       # Points to full dataset on Kaggle
 │   └── processed/
-│       ├── README.md                    # What changed and why
-│       └── events_clean.csv             # Combined cleaned sample — use this
+│       ├── README.md                       # What changed and why
+│       └── events_clean.csv                # Session-based sample — use this for development
 │
 ├── notebooks/
-│   ├── 00_data_exploration.ipynb        # Initial data exploration and findings
-│   ├── 01_preprocessing.ipynb           # Sampling and cleaning pipeline walkthrough
-│   ├── 02_user_behavior_analysis.ipynb
-│   ├── 03_user_segmentation.ipynb
-│   ├── 04_collaborative_filtering.ipynb
-│   ├── 05_ab_testing_analysis.ipynb
-│   ├── 06_time_sensitive_recommendations.ipynb
-│   ├── 07_customer_journey_visualization.ipynb
-│   └── 08_price_timing_predictor.ipynb
+│   ├── 00_data_exploration.ipynb           # Quick sample-based exploration of schema and data types
+│   ├── 01_full_dataset_exploration.ipynb   # Full exploration across all 110 million rows
+│   ├── 02_preprocessing.ipynb              # Sampling and cleaning pipeline walkthrough
+│   ├── 03_user_behavior_analysis.ipynb
+│   ├── 04_user_segmentation.ipynb
+│   ├── 05_collaborative_filtering.ipynb
+│   ├── 06_ab_testing_analysis.ipynb
+│   ├── 07_time_sensitive_recommendations.ipynb
+│   ├── 08_customer_journey_visualization.ipynb
+│   └── 09_price_timing_predictor.ipynb
 │
 ├── src/
 │   ├── data/
@@ -73,12 +72,11 @@ ecommerce-behavior-analysis/
 
 ## Dataset
 
-The project works with random samples of a large e-commerce event dataset from 
-Kaggle. The full dataset is never stored in this repository.
+The project works with a session-based sample of a large e-commerce event dataset from Kaggle. The full dataset is never stored in this repository.
 
-**Every teammate can start working immediately after cloning the repo** — the sample 
-files in `data/raw/` and `data/processed/` are committed to git and require no 
-additional downloads.
+**Every teammate can start working immediately after cloning the repo** — once the preprocessing notebook is complete, `data/processed/events_clean.csv` will be committed to git and require no additional downloads.
+
+> **Note:** `data/processed/events_clean.csv` does not exist yet. It will be committed after `notebooks/02_preprocessing.ipynb` is complete.
 
 If you need the full dataset for any reason, see `data/README.md` for instructions.
 
@@ -99,17 +97,9 @@ cd ecommerce-behavior-analysis
 pip install -r requirements.txt
 ```
 
-### 3. Set up environment variables
-```bash
-cp .env.example .env
-```
+### 3. Verify your setup
 
-Open `.env` and fill in your Kaggle credentials. This is only required if you need 
-to download the full dataset. See `data/README.md` for instructions.
-
-### 4. Verify your setup
-
-Load the processed sample to confirm everything is working:
+> Note: this step requires `data/processed/events_clean.csv` to exist. See the Dataset section above.
 ```python
 import pandas as pd
 df = pd.read_csv('data/processed/events_clean.csv', parse_dates=['event_time'])
@@ -127,6 +117,12 @@ For all development, load the processed sample:
 ```python
 import pandas as pd
 df = pd.read_csv('data/processed/events_clean.csv', parse_dates=['event_time'])
+```
+
+For final analysis and model training, use the full processed dataset on Kaggle:
+```python
+import pandas as pd
+df = pd.read_parquet('/kaggle/input/ecommerce-processed/events_clean.parquet')
 ```
 
 ### Notebook to src workflow
