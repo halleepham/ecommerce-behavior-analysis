@@ -38,12 +38,13 @@ ecommerce-behavior-analysis/
 │   ├── 01_full_dataset_exploration.ipynb   # Full exploration across all 110 million rows
 │   ├── 02_preprocessing.ipynb              # Sampling and cleaning pipeline walkthrough
 │   ├── 03_user_behavior_analysis.ipynb
-│   ├── 04_user_segmentation.ipynb
-│   ├── 05_collaborative_filtering.ipynb
-│   ├── 06_ab_testing_analysis.ipynb
-│   ├── 07_time_sensitive_recommendations.ipynb
-│   ├── 08_customer_journey_visualization.ipynb
-│   └── 09_price_timing_predictor.ipynb
+│   ├── 04_feature_engineering.ipynb
+│   ├── 05_user_segmentation.ipynb
+│   ├── 06_collaborative_filtering.ipynb
+│   ├── 07_ab_testing_analysis.ipynb
+│   ├── 08_time_sensitive_recommendations.ipynb
+│   ├── 09_customer_journey_visualization.ipynb
+│   └── 10_price_timing_predictor.ipynb
 │
 ├── src/
 │   ├── data/
