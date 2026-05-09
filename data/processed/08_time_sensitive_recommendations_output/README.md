@@ -10,11 +10,11 @@ Each file is saved to a private Kaggle dataset. Contact hdph78@umsystem.com for 
 
 | File | Shape | Primary key | Used in |
 |---|---|---|---|
-| `temporal_recommendations_sample.parquet` | (5,499,994 × 7) | (`user_id`, `temporal_rank`) | — |
-> **Note:** This is a random sample of ~1.1M users (50% of the full dataset). The full file (11,138,954 × 7) is available on Kaggle at halleepham/time-sensitive-recommendations-output.
+| `temporal_recommendations_sample.parquet` | (3,749,996 × 7) | (`user_id`, `temporal_rank`) | — |
+> **Note:** This is a random sample of 750,000 users (~34% of the full dataset). The full file (11,138,954 × 7) is available on Kaggle at halleepham/time-sensitive-recommendations-output.
 ---
 
-## temporal_recommendations.parquet
+## temporal_recommendations_sample.parquet
 
 One row per user per recommendation. Extends the baseline collaborative filtering recommendations from notebook 06 with temporal re-ranking. Each recommendation's predicted score is multiplied by a combined temporal lift factor — computed from category-level hour-of-day, day-of-week, and seasonal conversion patterns — to produce a temporal score. Recommendations are then re-ranked by temporal score within each user.
 
@@ -34,7 +34,7 @@ One row per user per recommendation. Extends the baseline collaborative filterin
 temporal_recommendations = pd.read_parquet(
     '/kaggle/input/datasets/halleepham/time-sensitive-outputs/temporal_recommendations.parquet'
 )
-print(temporal_recommendations.shape)  # (11138954, 7)
+print(temporal_recommendations.shape)  # (3749996, 7)
 ```
 
 ---
