@@ -34,7 +34,8 @@ ecommerce-behavior-analysis/
 │   ├── 06_collaborative_filtering.ipynb
 │   ├── 07_ab_testing_analysis.ipynb
 │   ├── 08_time_sensitive_recommendations.ipynb
-│   ├── 09_customer_journey_visualization.ipynb
+│   ├── 09_customer_history.ipynb
+│   ├── 09b_abandoned_cart_analysis.ipynb
 │   └── 10_price_timing_predictor.ipynb
 │
 ├── reports/
