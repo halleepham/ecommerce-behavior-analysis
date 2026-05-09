@@ -22,6 +22,7 @@ ecommerce-behavior-analysis/
 │   ├── README.md                        # Explaination of folder data folder set up
 │   ├── raw/                             # Points to full dataset on Kaggle
 │   └── processed/                       # Processed output files from each notebook
+│   └── metadata/                        # Metadata on all produced datasets
 │
 ├── notebooks/
 │   ├── 00_data_exploration.ipynb
@@ -36,8 +37,8 @@ ecommerce-behavior-analysis/
 │   ├── 09_customer_journey_visualization.ipynb
 │   └── 10_price_timing_predictor.ipynb
 │
-└── reports/
-└── figures/                         # Output plots organized by notebook
+├── reports/
+│   └──  figures/                         # Output plots organized by notebook
 ```
 
 ---

@@ -36,7 +36,7 @@ by inspecting per-cluster median feature values. The four segments are:
 | `cluster_id` | `cluster_label` | Size | Characteristics |
 |---|---|---|---|
 | 0 | Passive Browsers | 3,291,223 | Low event counts across all features, high `recency_days`, zero purchases, `cart_abandonment_rate` = 1.0 |
-| 1 | One Time Buyers | 170,343 | Low views (~4), ~1 purchase, non-zero `total_spend` (~$283), high `recency_days` |
+| 1 | One Time Buyers | 170,343 | Low views (~4), (~1) purchase, non-zero `total_spend` (~$283), high `recency_days` |
 | 2 | Active Browsers | 1,359,678 | High views (~24), low purchases, high `cart_abandonment_rate`, low `recency_days` (~9 days) |
 | 3 | Engaged Buyers | 495,405 | High views, non-zero purchases, non-zero `total_spend`, low `recency_days` |
 

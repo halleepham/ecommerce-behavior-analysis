@@ -8,20 +8,30 @@ This folder contains all datasets used and produced by the project.
 
 ```
 data/
-├── raw/                                    # See README inside — raw data comes from Kaggle directly
-└── processed/
-    ├── ecommerce_oct_nov_clean_sample.parquet    # 500k-row sample of the cleaned event log
-    ├── README.md                                 # Full details on the cleaned dataset
-    ├── 04_feature_engineering_output/            # Outputs from notebooks/04_feature_engineering.ipynb
-    │   └── README.md
-    ├── 05_user_segmentation_output/              # Outputs from notebooks/05_user_segmentation.ipynb
-    │   └── README.md
-    ├── 06_collaborative_filtering_output/        # Outputs from notebooks/06_collaborative_filtering.ipynb
-    │   └── README.md
-    ├── 08_time_sensitive_recommendations_output/ # Outputs from notebooks/08_time...recommendations.ipynb
-    │   └── README.md
-    └── 10_price_timing_predictor_output/         # Outputs from notebooks/10_price_timing_predictor.ipynb
-        └── README.md
+├── raw/                                  # See README inside — raw data comes from Kaggle directly
+│   └── README.md
+├── processed/
+│   ├── ecommerce_oct_nov_clean_sample.parquet
+│   ├── 04_feature_engineering_output/
+│   │   ├── product_price_history.parquet
+│   │   ├── session_features_sample.parquet
+│   │   ├── user_category_affinity.parquet
+│   │   └── user_segments.parquet
+│   ├── 05_user_segmentation_output/
+│   │   └── user_segments.parquet
+│   ├── 06_collaborative_filtering_output/
+│   │   ├── loo_test.parquet
+│   │   └── recommendations.parquet
+│   ├── 08_time_sensitive_recommendations_output/
+│   │   └── temporal_recommendations_sample.parquet
+│   └── 10_price_timing_predictor_output/
+│       └── purchase_timing_recommendations.parquet
+└── metadata/
+    ├── processed_data_metadata.md        # Cleaned event data — schema and cleaning decisions
+    ├── feature_engineering_metadata.md   # Outputs from notebook 04
+    ├── user_segments_metadata.md         # Outputs from notebook 05
+    ├── purchase_timing_metadata.md       # Outputs from notebook 10
+    └── ...                               # Other notebook output metadata files
 ```
 
 ---
@@ -30,12 +40,13 @@ data/
 
 **Cleaned event data** — `processed/ecommerce_oct_nov_clean_sample.parquet`
 is a 500k-row stratified sample of the full cleaned dataset, suitable for local
-development. See `processed/README.md` for full schema and cleaning decisions.
+development. See `metadata/processed_data_metadata.md` for full schema and
+cleaning decisions.
 
 **Feature tables, segmentation results, and model outputs** — each notebook's
-output files live in a subfolder named after that notebook (e.g.
-`04_feature_engineering_output/`). See the README inside each subfolder for
-column descriptions and load instructions.
+output files live in a subfolder named after that notebook under `processed/`
+(e.g. `04_feature_engineering_output/`). See the corresponding metadata file in
+`metadata/` for column descriptions and load instructions.
 
 **Raw data** — see `raw/README.md`. Raw data is sourced directly from the
 original Kaggle dataset and is not stored in this repository.
