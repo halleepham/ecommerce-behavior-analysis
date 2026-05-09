@@ -1,15 +1,3 @@
-# --- Data files (NEVER commit these) ---
-# Block all CSVs and data files by default
-*.csv
-*.parquet
-*.json
-*.zip
-
-# Explicitly allow the sample files in data/raw/ and data/processed/
-!data/raw/oct_sample.csv
-!data/raw/nov_sample.csv
-!data/processed/events_clean.csv
-
 # --- Python ---
 __pycache__/
 *.py[cod]
